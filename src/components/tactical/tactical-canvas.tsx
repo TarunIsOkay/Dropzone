@@ -63,10 +63,14 @@ export function TacticalCanvas({
   const containerRef = useRef<HTMLDivElement>(null);
   const [drawingRoute, setDrawingRoute] = useState<Array<{ x: number; y: number }>>([]);
   const [dragging, setDragging] = useState<string | null>(null);
+  const [panning, setPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [scale, setScale] = useState(1);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(0.5);
   const [imageLoaded, setImageLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const [imgSize, setImgSize] = useState({ w: 0, h: 0 });
 
   const toCanvasCoords = useCallback(
     (clientX: number, clientY: number) => {
@@ -80,6 +84,19 @@ export function TacticalCanvas({
     },
     [scale]
   );
+
+  const fitToContainer = useCallback(() => {
+    const container = containerRef.current;
+    const img = imgRef.current;
+    if (!container || !img) return;
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
+    const s = Math.min(cw / iw, ch / ih, 1);
+    setScale(s);
+    setOffset({ x: 0, y: 0 });
+  }, []);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -107,10 +124,8 @@ export function TacticalCanvas({
 
       if (route.points.length > 0) {
         const last = route.points[route.points.length - 1];
-        const angle = Math.atan2(
-          last.y - route.points[route.points.length - 2].y,
-          last.x - route.points[route.points.length - 2].x
-        );
+        const prev = route.points[route.points.length - 2];
+        const angle = Math.atan2(last.y - prev.y, last.x - prev.x);
         ctx.beginPath();
         ctx.fillStyle = route.color;
         ctx.moveTo(last.x, last.y);
@@ -169,14 +184,16 @@ export function TacticalCanvas({
     img.src = mapImage;
     img.onload = () => {
       imgRef.current = img;
+      setImgSize({ w: img.naturalWidth, h: img.naturalHeight });
       setImageLoaded(true);
       const canvas = canvasRef.current;
       if (canvas) {
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
       }
+      setTimeout(fitToContainer, 50);
     };
-  }, [mapImage]);
+  }, [mapImage, fitToContainer]);
 
   useEffect(() => {
     if (imageLoaded) draw();
@@ -187,11 +204,34 @@ export function TacticalCanvas({
     return () => clearInterval(interval);
   }, [draw]);
 
+  useEffect(() => {
+    const handleResize = () => fitToContainer();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [fitToContainer]);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setScale((prev) => Math.min(Math.max(prev * delta, 0.1), 5));
+  }, []);
+
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1 || (e.button === 0 && e.altKey)) {
+      setPanning(true);
+      setPanStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+      return;
+    }
+
     const pos = toCanvasCoords(e.clientX, e.clientY);
 
     if (activeTool === "marker") {
-      const markerType = activeRole === "enemy" ? "enemy" : activeRole === "loot" ? "loot" : "player";
+      const markerType =
+        activeRole === "enemy"
+          ? "enemy"
+          : activeRole === "loot"
+          ? "loot"
+          : "player";
       onMarkerAdd({
         type: markerType,
         x: pos.x,
@@ -207,16 +247,21 @@ export function TacticalCanvas({
       );
       if (hit) {
         setDragging(hit.id);
-        setOffset({ x: hit.x - pos.x, y: hit.y - pos.y });
+        setDragOffset({ x: hit.x - pos.x, y: hit.y - pos.y });
       }
     }
   };
 
   const handleCanvasMouseMove = (e: React.MouseEvent) => {
+    if (panning) {
+      setOffset({ x: e.clientX - panStart.x, y: e.clientY - panStart.y });
+      return;
+    }
+
     const pos = toCanvasCoords(e.clientX, e.clientY);
 
     if (dragging) {
-      onMarkerMove(dragging, pos.x + offset.x, pos.y + offset.y);
+      onMarkerMove(dragging, pos.x + dragOffset.x, pos.y + dragOffset.y);
     }
 
     if (activeTool === "route" && drawingRoute.length > 0) {
@@ -231,6 +276,7 @@ export function TacticalCanvas({
   };
 
   const handleCanvasMouseUp = () => {
+    setPanning(false);
     if (dragging) setDragging(null);
 
     if (activeTool === "route" && drawingRoute.length > 1) {
@@ -250,28 +296,80 @@ export function TacticalCanvas({
         setDragging(null);
       }
     }
+    if (e.key === "+" || e.key === "=") {
+      setScale((prev) => Math.min(prev * 1.2, 5));
+    }
+    if (e.key === "-") {
+      setScale((prev) => Math.max(prev * 0.8, 0.1));
+    }
+    if (e.key === "0") {
+      fitToContainer();
+    }
   };
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-auto bg-dz-bg"
+      className="relative w-full h-full overflow-hidden bg-dz-bg"
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
-      <canvas
-        ref={canvasRef}
-        className={cn(
-          "cursor-crosshair",
-          activeTool === "select" && "cursor-grab",
-          dragging && "cursor-grabbing"
-        )}
-        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
-        onMouseDown={handleCanvasMouseDown}
-        onMouseMove={handleCanvasMouseMove}
-        onMouseUp={handleCanvasMouseUp}
-        onMouseLeave={handleCanvasMouseUp}
-      />
+      <div
+        className="absolute"
+        style={{
+          transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+          transformOrigin: "top left",
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          className={cn(
+            "cursor-crosshair",
+            activeTool === "select" && "cursor-grab",
+            dragging && "cursor-grabbing",
+            panning && "cursor-grabbing"
+          )}
+          onMouseDown={handleCanvasMouseDown}
+          onMouseMove={handleCanvasMouseMove}
+          onMouseUp={handleCanvasMouseUp}
+          onMouseLeave={handleCanvasMouseUp}
+          onWheel={handleWheel}
+        />
+      </div>
+
+      {/* Zoom controls */}
+      <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-dz-surface/90 backdrop-blur-sm border border-dz-border rounded-lg p-1">
+        <button
+          onClick={() => setScale((s) => Math.min(s * 1.2, 5))}
+          className="w-8 h-8 rounded flex items-center justify-center text-dz-text-muted hover:text-dz-text hover:bg-dz-elevated transition-colors"
+          title="Zoom in (+)"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="7" cy="7" r="5"/><line x1="11" y1="11" x2="14" y2="14"/><line x1="5" y1="7" x2="9" y2="7"/><line x1="7" y1="5" x2="7" y2="9"/></svg>
+        </button>
+        <span className="text-[10px] text-dz-text-dim w-10 text-center font-mono">
+          {Math.round(scale * 100)}%
+        </span>
+        <button
+          onClick={() => setScale((s) => Math.max(s * 0.8, 0.1))}
+          className="w-8 h-8 rounded flex items-center justify-center text-dz-text-muted hover:text-dz-text hover:bg-dz-elevated transition-colors"
+          title="Zoom out (-)"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="7" cy="7" r="5"/><line x1="11" y1="11" x2="14" y2="14"/><line x1="5" y1="7" x2="9" y2="7"/></svg>
+        </button>
+        <div className="w-px h-5 bg-dz-border" />
+        <button
+          onClick={fitToContainer}
+          className="w-8 h-8 rounded flex items-center justify-center text-dz-text-muted hover:text-dz-text hover:bg-dz-elevated transition-colors"
+          title="Fit to view (0)"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><polyline points="5,2 2,2 2,5"/><polyline points="11,14 14,14 14,11"/><polyline points="14,5 14,2 11,2"/><polyline points="2,11 2,14 5,14"/></svg>
+        </button>
+      </div>
+
+      {/* Help hint */}
+      <div className="absolute top-4 left-4 text-[10px] text-dz-text-dim/50 pointer-events-none select-none">
+        Scroll to zoom · Alt+drag to pan · Delete to remove marker
+      </div>
     </div>
   );
 }
