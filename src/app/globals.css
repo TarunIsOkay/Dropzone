@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@layer base {
+  :root {
+    --dz-bg: 10 10 15;
+    --dz-surface: 18 18 26;
+    --dz-elevated: 26 26 38;
+    --dz-border: 42 42 58;
+    --dz-crimson: 220 38 38;
+    --dz-cyan: 6 182 212;
+  }
+
+  * {
+    border-color: theme("colors.dz.border");
+  }
+
+  body {
+    @apply bg-dz-bg text-dz-text antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-dz-crimson/30 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dz-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-dz-border-light;
+  }
+}
+
+@layer components {
+  .dz-card {
+    @apply bg-dz-surface border border-dz-border rounded-lg;
+  }
+
+  .dz-card-elevated {
+    @apply bg-dz-elevated border border-dz-border rounded-lg;
+  }
+
+  .dz-glow {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.1);
+  }
+
+  .dz-glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+  }
+
+  .dz-input {
+    @apply w-full bg-dz-elevated border border-dz-border rounded-lg px-4 py-2.5
+      text-dz-text placeholder:text-dz-text-dim
+      focus:outline-none focus:ring-2 focus:ring-dz-crimson/50 focus:border-dz-crimson
+      transition-colors duration-200 text-sm;
+  }
+
+  .dz-label {
+    @apply text-xs font-medium text-dz-text-muted uppercase tracking-wider;
+  }
+
+  .dz-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .dz-badge-crimson {
+    @apply dz-badge bg-dz-crimson/10 text-dz-crimson-400 border border-dz-crimson/20;
+  }
+
+  .dz-badge-cyan {
+    @apply dz-badge bg-dz-cyan/10 text-dz-cyan-400 border border-dz-cyan/20;
+  }
+
+  .dz-badge-green {
+    @apply dz-badge bg-dz-green/10 text-dz-green-400 border border-dz-green/20;
+  }
+
+  .dz-badge-amber {
+    @apply dz-badge bg-dz-amber/10 text-dz-amber-400 border border-dz-amber/20;
+  }
+
+  .dz-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+      font-medium text-sm transition-all duration-200 cursor-pointer
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .dz-btn-primary {
+    @apply dz-btn bg-dz-crimson text-white hover:bg-dz-crimson-600 active:bg-dz-crimson-700
+      shadow-glow hover:shadow-glow-lg;
+  }
+
+  .dz-btn-secondary {
+    @apply dz-btn bg-dz-elevated text-dz-text border border-dz-border
+      hover:bg-dz-border hover:border-dz-border-light;
+  }
+
+  .dz-btn-ghost {
+    @apply dz-btn text-dz-text-muted hover:text-dz-text hover:bg-dz-elevated;
+  }
+
+  .dz-btn-cyan {
+    @apply dz-btn bg-dz-cyan/10 text-dz-cyan-400 border border-dz-cyan/20
+      hover:bg-dz-cyan/20;
+  }
+
+  .dz-skeleton {
+    @apply animate-pulse bg-dz-elevated rounded;
+  }
+
+  .dz-divider {
+    @apply border-t border-dz-border;
+  }
+
+  .dz-status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .dz-status-online {
+    @apply dz-status-dot bg-dz-green;
+  }
+
+  .dz-status-offline {
+    @apply dz-status-dot bg-dz-text-dim;
+  }
+
+  .dz-status-live {
+    @apply dz-status-dot bg-dz-crimson animate-pulse;
+  }
+
+  .dz-mono {
+    @apply font-mono text-sm;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fade-in 0.3s ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
