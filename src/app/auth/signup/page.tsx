@@ -44,6 +44,7 @@ export default function SignupPage() {
       password,
       options: {
         data: { username },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
