@@ -273,10 +273,10 @@ export function TacticalCanvas({
   };
 
   // --- Touch handlers ---
-  const getTouchDist = (t1: Touch, t2: Touch) =>
+  const getTouchDist = (t1: { clientX: number; clientY: number }, t2: { clientX: number; clientY: number }) =>
     Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
 
-  const getTouchCenter = (t1: Touch, t2: Touch) => ({
+  const getTouchCenter = (t1: { clientX: number; clientY: number }, t2: { clientX: number; clientY: number }) => ({
     x: (t1.clientX + t2.clientX) / 2,
     y: (t1.clientY + t2.clientY) / 2,
   });
