@@ -3,6 +3,13 @@
 <!-- capsule header -->
 <img src="https://capsule-render.vercel.app/api?type=waving&color=dc2626&height=200&section=header&text=DROPZONE&fontSize=80&fontColor=ffffff&animation=fadeIn&desc=Build%20Your%20Squad%20—%20Master%20The%20Map%20—%20Dominate&descAlignY=75" />
 
+<!-- official DZ logo -->
+<p>
+  <img src="public/logo.png" alt="DropZone Logo — DZ" width="320" style="border-radius: 24px; box-shadow: 0 0 40px rgba(220,38,38,0.35);" />
+  <br/>
+  <sub><b>DZ — DROPZONE</b> • Official Logo • <code>public/logo.png</code></sub>
+</p>
+
 <!-- typing svg -->
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=3000&pause=800&color=DC2626&center=true&vCenter=true&width=900&lines=Premier+Competitive+Platform+for+Free+Fire+Esports+%F0%9F%94%A5;Tournaments+%2B+Teams+%2B+Tactical+Maps+%2B+Analytics+%2B+Realtime+Chat;Next.js+14+%E2%80%A2+Supabase+%E2%80%A2+Tailwind+%E2%80%A2+Framer+Motion+%E2%80%A2+Recharts" alt="Typing SVG" /></a>
 
@@ -110,18 +117,13 @@
 
 <div align="center">
 
-<!-- picture with dark/light -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://via.placeholder.com/1200x600/12121a/dc2626?text=DROPZONE+%E2%80%A2+DARK+MODE">
-  <source media="(prefers-color-scheme: light)" srcset="https://via.placeholder.com/1200x600/ffffff/dc2626?text=DROPZONE+%E2%80%A2+LIGHT+MODE">
-  <img alt="DropZone Hero" src="https://via.placeholder.com/1200x600/0a0a0f/e8e8f0?text=BUILD+YOUR+SQUAD+%E2%80%A2+MASTER+THE+MAP+%E2%80%A2+DOMINATE">
-</picture>
+<img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=1200&h=600&fit=crop&auto=format" alt="DropZone Hero — esports arena lights" width="1200" style="border-radius:16px; border:1px solid #2a2a3a;" />
 
-*Hero — `src/app/landing/page.tsx:185` — radial glow + grid pattern + Framer entrance.*
+*Hero vibe — `src/app/landing/page.tsx:185` — radial glow + grid pattern + Framer entrance. Image: esports arena (Unsplash, for README illustration only). Logo above is the **official DZ mark** — not reused elsewhere.*
 
 | Dashboard | Map Studio | Analytics |
 | :---: | :---: | :---: |
-| <img src="https://via.placeholder.com/400x220/1a1a26/e8e8f0?text=Dashboard" width="400"/> | <img src="https://via.placeholder.com/400x220/1a1a26/06b6d4?text=Tactical+Canvas" width="400"/> | <img src="https://via.placeholder.com/400x220/1a1a26/f59e0b?text=Analytics" width="400"/> |
+| <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&h=340&fit=crop&auto=format" width="400" alt="Esports Dashboard"/> | <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=340&fit=crop&auto=format" width="400" alt="Tactical Map — esports arena"/> | <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&h=340&fit=crop&auto=format" width="400" alt="Analytics & Leaderboard"/> |
 | Live matches • rating • community | Markers • Routes • Layers • Timeline | Recharts • Rating history • Leaderboard |
 
 </div>
@@ -558,6 +560,11 @@ $$
 
 > Drop your own: add `public/maps/<name>.jpg` + extend `maps[]` in `src/app/(dashboard)/strategies/page.tsx:41`.
 
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1000&h=350&fit=crop&auto=format" alt="Top-down tactical map view — illustration" width="1000" style="border-radius:12px; border:1px solid #2a2a3a;" />
+  <br/><sub>Tactical overview — illustration only (maps in <code>public/maps/</code> are the source of truth)</sub>
+</p>
+
 ---
 
 ## 🗄️ Database Schema
@@ -687,6 +694,11 @@ git push origin main
 | `src/app/actions/admin.ts` | `*` | `reports`, `audit_logs` (admin only) |
 
 All actions validate with `zod` + check `auth.uid()` + respect RLS — no service_role leak.
+
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1000&h=380&fit=crop&auto=format" alt="Tournament stage — competitive gaming" width="1000" style="border-radius:12px; border:1px solid #2a2a3a;" />
+  <br/><sub>Competition time — illustration (not the DZ logo)</sub>
+</p>
 
 ---
 
