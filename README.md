@@ -196,21 +196,21 @@ dz: {
 
 ```mermaid
 flowchart LR
-  A[👤 Player] --> B[Landing / Auth]
-  B --> C{Middleware src/middleware.ts}
-  C -->|anon| D[/landing, /auth/*]
-  C -->|authed| E[(Dashboard Layout)]
-  E --> F[[Tournaments]]
-  E --> G[[Teams & Search]]
-  E --> H[[Map Studio\nTacticalCanvas]]
-  E --> I[[Analytics\nRecharts]]
-  E --> J[[Realtime Chat\nSupabase Channels]]
-  H --> K[(Supabase Postgres\nRLS + RLS Policies)]
+  A["Player"] --> B["Landing / Auth"]
+  B --> C{"Middleware<br/>src/middleware.ts"}
+  C -->|anon| D["/landing, /auth/*"]
+  C -->|authed| E[("Dashboard Layout")]
+  E --> F[["Tournaments"]]
+  E --> G[["Teams & Search"]]
+  E --> H[["Map Studio<br/>TacticalCanvas"]]
+  E --> I[["Analytics<br/>Recharts"]]
+  E --> J[["Realtime Chat<br/>Supabase Channels"]]
+  H --> K[("Supabase Postgres<br/>RLS + RLS Policies")]
   F --> K
   G --> K
   I --> K
   J --> K
-  K --> L[Rating / Stats Triggers]
+  K --> L["Rating / Stats Triggers"]
   style H fill:#dc2626,stroke:#fff,color:#fff
   style K fill:#3ECF8E,stroke:#000,color:#000
 ```
@@ -260,13 +260,13 @@ stateDiagram-v2
 ```mermaid
 gitGraph
   commit id: "init: Next 14 + Supabase"
-  branch feature/tactical
+  branch "feature/tactical"
   commit id: "canvas: auto-fit + zoom"
   commit id: "mobile: touch + pinch"
   commit id: "fix: Touch type"
   checkout main
-  merge feature/tactical tag: "v0.1.0"
-  commit id: "docs: README glow ✨"
+  merge "feature/tactical" tag: "v0.1.0"
+  commit id: "docs: README glow"
 ```
 
 ### Analytics Pie (phase perf demo)
