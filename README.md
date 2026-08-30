@@ -86,18 +86,6 @@
 > [!IMPORTANT]
 > Requires `Node.js >= 18.17` and a **Supabase project** (local or cloud). See [🔐 Environment Variables](#-environment-variables).
 
-<table>
-<tr>
-<td align="center"><b>12.5K+</b><br/><sub>Active Players</sub></td>
-<td align="center"><b>2,800+</b><br/><sub>Teams Formed</sub></td>
-<td align="center"><b>450+</b><br/><sub>Tournaments Held</sub></td>
-<td align="center"><b>28K+</b><br/><sub>Matches Played</sub></td>
-</tr>
-</table>
-
-<!-- invisible comment: easter egg -->
-<!-- DZ_SECRET: Try Konami code on the landing page 😉 -->
-
 ---
 
 ## 🎯 Why DropZone?
